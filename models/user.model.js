@@ -3,7 +3,7 @@ const { required } = require("zod/mini");
 
 const UserSchema = new mongoose.Schema({
     fullName: { type: String, required: true },
-    StudentCard : {type : String , required :true},
+    StudentCard : {type : String , required : function(){ this.role === "Student"}},
     email: { type: String, unique: true, required: true },
     password: { type: String, required: true },
     role: { 
@@ -13,7 +13,8 @@ const UserSchema = new mongoose.Schema({
     },
     universityId: { type: mongoose.Schema.Types.ObjectId, ref: "University" },
     departementId: { type: mongoose.Schema.Types.ObjectId, ref: "departement" },
-    semesterId: { type: mongoose.Schema.Types.ObjectId, ref: "Semester" },
+    section : [{ type : mongoose.Schema.Types.ObjectId , ref : "section"}],
+    Modules : [{ type : mongoose.Types.ObjectId , ref : "Module"}]
 },{ timestamps : true });
 
 module.exports = mongoose.model("User", UserSchema);

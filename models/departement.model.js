@@ -7,7 +7,6 @@ const departementSchema = new mongoose.Schema({
     universityId: { type: mongoose.Schema.Types.ObjectId, ref: "University"},
     sections : [{ type : mongoose.Schema.Types.ObjectId , ref: "Section"}],
     Speciallities : [{ type : mongoose.Schema.ObjectId , ref : "Speciality"}],
-    serverId : { type : String }
 },{ timestamps : true})
 
 const departement = mongoose.model('departement',departementSchema)
