@@ -7,7 +7,10 @@ const UniversitySchema = new mongoose.Schema({
     address : { type : String },
     phoneNumber : { type : String},
     logo : { type : String },
-    departement : { type : mongoose.Types.ObjectId , ref : 'departement'}
+    departement : { type : mongoose.Types.ObjectId , ref : 'departement'},
+    emailUniversity : { type : String , reqiured : true},
+    email : { type : String },
+    password : { type : String }
 },{ timestamps : true})
 
 const University = mongoose.model('University',UniversitySchema)

@@ -7,7 +7,7 @@ const SectionSchema = new mongoose.Schema({
     System : { type: String, enum:["LMD","Classic"] , required: true },
     Niveaux : { type: String , required: true},
     isSpeciality : { type : Boolean , default : false},
-    teacher : [{
+    professeur : [{
         data : { type : mongoose.Types.ObjectId , ref : "User"},
         module : { type : mongoose.Types.ObjectId , ref : "Module"}
     }],

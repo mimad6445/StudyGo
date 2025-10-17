@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { required } = require("zod/mini");
 
 const UserSchema = new mongoose.Schema({
     fullName: { type: String, required: true },
@@ -8,12 +7,12 @@ const UserSchema = new mongoose.Schema({
     password: { type: String, required: true },
     role: { 
         type: String, 
-        enum: ["SuperAdmin", "Admin", "Teacher", "Student"], 
+        enum: [ "Admin", "Teacher", "Student"], 
         required: true 
     },
-    universityId: { type: mongoose.Schema.Types.ObjectId, ref: "University" },
-    departementId: { type: mongoose.Schema.Types.ObjectId, ref: "departement" },
-    section : [{ type : mongoose.Schema.Types.ObjectId , ref : "section"}],
+    universityId: { type: mongoose.Types.ObjectId, ref: "University" },
+    departementId: { type: mongoose.Types.ObjectId, ref: "departement" },
+    section : [{ type : mongoose.Types.ObjectId , ref : "section"}],
     Modules : [{ type : mongoose.Types.ObjectId , ref : "Module"}]
 },{ timestamps : true });
 
