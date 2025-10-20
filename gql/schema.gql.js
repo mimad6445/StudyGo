@@ -10,11 +10,11 @@ const {
     GraphQLNonNull,
     GraphQLFloat
 } = require('graphql');
-const departement = require('../models/departement.model');
 
 const ErrorType = new GraphQLObjectType({
     name: 'Error',
     fields: {
+        code : { type: GraphQLInt },
         message: { type: GraphQLString },
     },
 });
