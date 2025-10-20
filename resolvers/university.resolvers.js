@@ -1,4 +1,3 @@
-const { _ } = require("sequelize/lib/sequelize/utils");
 const University = require("../models/university.model")
 const { addUniversity } = require("../validation/university.validation")
 const bcrypt = require("bcryptjs")
@@ -41,25 +40,28 @@ const loginUniversity = async (_,{email,password})=>{
         const isEmail = /\S+@\S+\.\S+/.test(email);
         if (!isEmail) {
             return {
+                code : 300,
                 message: "Invalid email format."
             };
         }
         const existingUniversity = await University.findOne({ email });
         if (!existingUniversity) {
             return {
+                code : 404,
                 message: "University not found."
             };
         }
-        const isMatch = await bcrypt.compare(password, existingUser.password);
+        const isMatch = await bcrypt.compare(password, existingUniversity.password);
         if (!isMatch) {
             return {
+                code : 301,
                 message: "Invalid password."
             };
         }
         const token = await generateToken({ email: existingUniversity.email, id: existingUniversity._id, role: 'university' });
         return {
             token,
-            user: existingUser
+            user: existingUniversity
         };
     } catch (error) {
         return {
