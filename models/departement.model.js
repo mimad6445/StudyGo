@@ -7,6 +7,7 @@ const departementSchema = new mongoose.Schema({
     location : { type : String },
     universityId: { type: mongoose.Types.ObjectId, ref: "University"},
     sections : [{ type : mongoose.Types.ObjectId , ref: "Section"}],
+    modules : [{ type : mongoose.Types.ObjectId , ref : "Module"}],
     email : { type : String },
     password : { type : String }
 },{ timestamps : true})

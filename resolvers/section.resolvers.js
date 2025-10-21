@@ -83,7 +83,14 @@ const getAllSectionByDepartementId = async (_,{departementId},context)=>{
 
 const loginSection = async (_,{serverId})=>{
     try {
-        
+        const exisistingSection = await section.findOne({ serverId })
+        if(!exisistingSection){
+            return {
+                code : 404,
+                message : "No Sctions Created"
+            }
+        }
+        return exisistingSection;
     } catch (error) {
         console.error(error);
         return {
@@ -92,3 +99,4 @@ const loginSection = async (_,{serverId})=>{
         };
     }
 }
+

@@ -11,7 +11,8 @@ const SectionSchema = new mongoose.Schema({
         data : { type : mongoose.Types.ObjectId , ref : "User"},
         module : { type : mongoose.Types.ObjectId , ref : "Module"}
     }],
-    serverId : { type : String , unique : true, required : true}
+    serverId : { type : String , unique : true, required : true},
+    users : [{ type : mongoose.Types.ObjectId , ref : "Account"}],
 },{ timestamps : true})
 
 const section = mongoose.model('section',SectionSchema)
