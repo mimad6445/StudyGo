@@ -5,11 +5,12 @@ const departementSchema = new mongoose.Schema({
     name: { type: String, required: true },
     description: { type: String },
     location : { type : String },
+    establishedYear : { type : String },
     universityId: { type: mongoose.Types.ObjectId, ref: "University"},
+    rooms : [{ type : mongoose.Types.ObjectId , ref: "room"}],
     sections : [{ type : mongoose.Types.ObjectId , ref: "Section"}],
     modules : [{ type : mongoose.Types.ObjectId , ref : "Module"}],
-    email : { type : String },
-    password : { type : String }
+    userId : { type : mongoose.Types.ObjectId , ref : "Account", required : true },
 },{ timestamps : true})
 
 const departement = mongoose.model('departement',departementSchema)

@@ -5,7 +5,7 @@ const FileSchema = new mongoose.Schema({
     name : { type : String },
     type : { type : String },
     path : { type : String , required : true},
-    uploadedBy : { type : mongoose.Types.ObjectId , ref : 'User'},
+    uploadedBy : { type : mongoose.Types.ObjectId , ref : 'Teacher'},
     moduleId : { type : mongoose.Types.ObjectId , ref : 'Module'}
 },{ timestamps : true})
 
