@@ -10,4 +10,16 @@ const addProffesor = z.object({
     city : z.string()
 })
 
-module.exports = { addProffesor }
+const addStudent = z.object({
+    fullName: z.string(),
+    StudentCard : z.string(),
+    dateOfBirth : z.string(),
+    gender : z.string(),
+    address : z.string().optional(),
+    bloodGroup : z.string().optional(),
+    phoneNumber : z.string().optional(),
+    email : z.string().optional(),
+    emailUniversity : z.string(),
+})
+
+module.exports = { addProffesor , addStudent }

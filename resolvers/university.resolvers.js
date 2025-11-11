@@ -1,4 +1,4 @@
-const University = require("../models/university.model")
+const University = require("../models/University.model")
 const { addUniversity } = require("../validation/university.validation")
 const bcrypt = require("bcryptjs")
 

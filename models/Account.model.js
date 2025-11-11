@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
-    email : { type: String, required: true },
-    emailUniversity : { type : String , unique: true, required : function(){ this.role === "Student" || this.role === "Teacher"}},
+    email : { type: String , unique : true , sparse: true },
+    emailUniversity : { type : String , unique : true , sparse: true, required : function(){ this.role === "Student" || this.role === "Teacher"}},
     phoneNumber : { type: String , unique : true , sparse: true},
-    password: { type: String, required: true },
+    password: { type: String },
     role: {  type: String,  enum: [ "SuperAdmin","Admin", "Teacher", "Student"],  required: true },
     isActive: { type: Boolean, default: true },
     isEmailVerified: { type: Boolean, default: false },

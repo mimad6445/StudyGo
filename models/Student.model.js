@@ -13,6 +13,7 @@ const UserSchema = new mongoose.Schema({
     universityId: { type: mongoose.Types.ObjectId, ref: "University", required : true },
     departementId: { type: mongoose.Types.ObjectId, ref: "departement", required : true },
     section : { type : mongoose.Types.ObjectId , ref : "section"},
+    servers : [{ type : mongoose.Types.ObjectId , ref : "section" }]
 }, { timestamps: true });
 
 module.exports = mongoose.model("Student", UserSchema);
