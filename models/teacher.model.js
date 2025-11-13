@@ -14,7 +14,6 @@ const UserSchema = new mongoose.Schema({
     bloodGroup : { type : String , enum : ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"] },
     userId : { type : mongoose.Types.ObjectId , ref : "Account", required : true },
     Modules : [{ type : mongoose.Types.ObjectId , ref : "Module"}],
-    Schedules : [{ type : mongoose.Types.ObjectId , ref : "Schedule"}],
     universityId: { type: mongoose.Types.ObjectId, ref: "University", required : true },
     departementId: { type: mongoose.Types.ObjectId, ref: "departement", required : true },
     section : [{ type : mongoose.Types.ObjectId , ref : "section"}],

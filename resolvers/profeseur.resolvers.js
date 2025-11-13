@@ -273,5 +273,9 @@ module.exports = {
     getAllProfeseurByDepartementId,
     getProfeseurById,
     loginProfeseur,
-    deleteProfeseur
+    deleteProfeseur,
+    AddProffesorToSection,
+    UpdateProfeseur,
+    ProfeseurModules,
+    ProfeseurSections
 }

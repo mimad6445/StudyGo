@@ -88,4 +88,9 @@ const loginDepartement = async (_,{email,password})=>{
     }
 }
 
-// const 
+module.exports = {
+    getAllDepertement,
+    CreateDepartement,
+    loginDepartement,
+    
+};

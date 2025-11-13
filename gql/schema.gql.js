@@ -28,13 +28,33 @@ const FileType = new GraphQLObjectType({
     }
 })
 
+const AccountType = new GraphQLObjectType({
+    name : "Account",
+    fields : ()=>({
+        email : { type : GraphQLString },
+        emailUniversity : { type : GraphQLString },
+        phoneNumber : { type : GraphQLString },
+        password: { type : GraphQLString },
+        role: { type : GraphQLString },
+        isActive: { type : GraphQLString },
+        isEmailVerified: { type : GraphQLString },
+    })
+})
+
 const StudentType = new GraphQLObjectType({
     name : "Student",
-    fields : {
-        fullName : { type : GraphQLString },
+    fields : ()=>({
+        fullName: { type : GraphQLString },
         StudentCard : { type : GraphQLString },
-        email : { type : GraphQLString },
-    }
+        dateOfBirth : { type : GraphQLString },
+        gender : { type : GraphQLString },
+        address : { type : GraphQLString },
+        profileImage : { type : GraphQLString },
+        bloodGroup : { type : GraphQLString },
+        status : { type : GraphQLString },
+        userId : { type : AccountType },
+        servers : { type : GraphQLList(GraphQLString) }
+    })
 })
 
 const StudentResultType = new GraphQLUnionType({
@@ -48,27 +68,8 @@ const StudentResultType = new GraphQLUnionType({
     },
 })
 
-const ProfesseurType = new GraphQLObjectType({
-    name : "Professeur",
-    fields:{
-        fullName : { type : GraphQLString},
-        email : { type : GraphQLString},
-    }
-})
-
-const ProfesseurResultType = new GraphQLUnionType({
-    name : "ProfesseurResult",
-    types : [ProfesseurType,StudentType],
-    resolveType(value){
-        if(value.message){
-            return 'Error'
-        }
-        return 'Professeur'
-    }
-})
-
 const ModuleType = new GraphQLObjectType({
-    name : 'Module',
+    name : "Module",
     fields : {
         name: { type: GraphQLString },
         code: { type: GraphQLString }, // optional, e.g., "CS101"
@@ -78,6 +79,7 @@ const ModuleType = new GraphQLObjectType({
     }
 })
 
+
 const ModuleResultType = new GraphQLUnionType({
     name : 'ModuleResult',
     types : [ModuleType, ErrorType],
@@ -86,6 +88,69 @@ const ModuleResultType = new GraphQLUnionType({
             return 'Error'
         }
         return 'Module'
+    }
+})
+
+const TeacherType = new GraphQLObjectType({
+    name : "Teacher",
+    fields:()=>({
+        fullName: { type : GraphQLString },
+        dateOfBirth :{ type : GraphQLString },
+        gender : { type : GraphQLString },
+        designation : { type : GraphQLString },
+        address : { type : GraphQLString },
+        profileImage : { type : GraphQLString },
+        degree : { type : GraphQLString },
+        status : { type : GraphQLString },
+        linkedIn : { type : GraphQLString },
+        researchArea : { type : GraphQLString },
+        bloodGroup : { type : GraphQLString },
+        userId : { type : AccountType },
+        Modules : { type : ModuleType },
+        files : [{ type : mongoose.Types.ObjectId , ref : "file"}],
+    })
+})
+
+const TeacherResultType = new GraphQLUnionType({
+    name : "TeacherResult",
+    types : [TeacherType,StudentType],
+    resolveType(value){
+        if(value.message){
+            return 'Error'
+        }
+        return 'Professeur'
+    }
+})
+
+const ScheduleType = new GraphQLObjectType({
+    name : "Schedule",
+    fields :{
+        // title: { type: String, required: true },
+        // description: { type: String },
+        // startTime: { type: Date, required: true },
+        // endTime: { type: Date, required: true },
+        // sectionId: { type: mongoose.Types.ObjectId, ref: "Section", required: true },
+        // files: [{ type: mongoose.Types.ObjectId, ref: "file" }],
+    }
+})
+
+const yearAcadimicType = new GraphQLObjectType({
+    name : "yearAcadmic",
+    fields : ()=>({
+        startYear: { type : GraphQLInt },
+        endYear: { type : GraphQLInt },
+        isCurrent: { type : GraphQLInt },
+        semester: { type : GraphQLInt },
+        // departementId: { type : GraphQLInt },
+    })
+})
+
+const GroupType = new GraphQLObjectType({
+    name : 'Group',
+    fields : {
+        name: { type : GraphQLString },
+        description: { type : GraphQLString },
+        members: { type : new GraphQLList(StudentType)},
     }
 })
 
@@ -100,12 +165,16 @@ const ProfOfSections = new GraphQLObjectType({
 const SectionType = new GraphQLObjectType({
     name : 'Section',
     fields :{
-        yearAcadimic : { type : GraphQLString },
+        yearAcadimic : { type : yearAcadimicType },
         System : { type: GraphQLString },
         Niveaux : { type: GraphQLString },
         isSpeciality : { type : GraphQLBoolean },
         professeur : { type : GraphQLList(ProfOfSections)},
-        serverId : { type : GraphQLString }
+        serverId : { type : GraphQLString },
+        users : { type : new GraphQLList(StudentType)},
+        Groups : { type : new GraphQLList(GroupType)},
+        Schedule : { type : ScheduleType },
+        files : { type : FileType },
     }
 })
 

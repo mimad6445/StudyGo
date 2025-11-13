@@ -2,6 +2,7 @@ const user = require("../models/Account.model.js");
 const { addStudent } = require("../validation/user.validation.js")
 const departement = require("../models/departement.model.js")
 const section = require("../models/Section.model.js")
+const student = require("../models/Student.model.js")
 const mongoose = require("mongoose")
 
 const getCurrentUser = ()=>{
@@ -68,11 +69,52 @@ const CreateStudent = async(_,{userInput,sectionId, departementId,yearAcadimic},
                 message : "Already Exisit"
             }
         }
-        
+        const newUser = await user({
+            fullName,StudentCard,dateOfBirth,gender,address,bloodGroup,phoneNumber,email,emailUniversity
+        })
+        await newUser.save()
+        return newUser;
     } catch (error) {
         return {
             code : 500,
             message : "Internal server Error : " + error
         }
     }
+}
+
+
+const getUserId = async (_,{userId})=>{
+    try{
+        const existingUser = await user.findById(userId)
+        if(!existingUser){
+            return {
+                code : 404,
+                message : "user Not Found"
+            }
+        }
+        return existingUser
+    }catch(error){
+        return {
+            code : 500,
+            message : "Internal server Error : " + error
+        }
+    }
+}
+
+const getAllStudentBySectionId = async (_,{SectionId})=>{
+    try {
+        const AllStudent = await student.find({section : SectionId})
+        return AllStudent;
+    } catch (error) {
+        return {
+            code : 500,
+            message : "Internal server Error : " + error
+        }
+    }
+}
+
+module.exports = {
+    getUserId,
+    getAllUsers,
+    getAllStudentBySectionId
 }
