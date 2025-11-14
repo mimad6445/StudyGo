@@ -1,10 +1,10 @@
-const University = require("../models/University.model")
+const University = require("../models/university.model.js")
 const { addUniversity } = require("../validation/university.validation")
 const bcrypt = require("bcryptjs")
 
 const AddUniversity = async (_,{universityInput},{context})=>{
     try {
-        if(!context.user || context.user.role !== 'admin'){
+        if(!context.user || context.user.role !== 'GOAT'){
             return {
                 message: "Error creating pub: Admin is not authorized"
             };

@@ -10,7 +10,12 @@ const QueryType = new GraphQLObjectType({
             type : new GraphQLList(UniversityResultType),
             resolve : findAllUniversity
         },
-        
+        Hello : {
+            type : GraphQLString,
+            resolve : ()=>{
+                return "Hello nI"
+            }
+        }
     }
 })
 

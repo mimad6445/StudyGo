@@ -9,6 +9,7 @@ const UniversitySchema = new mongoose.Schema({
     establishedYear : { type : String },
     emailUniversity : { type : String , required : true},
     departements : [{ type : mongoose.Types.ObjectId , ref : 'departement'}],
+    userId : { type : mongoose.Types.ObjectId , ref : "Account" }
 },{ timestamps : true})
 
 const University = mongoose.model('University',UniversitySchema)
