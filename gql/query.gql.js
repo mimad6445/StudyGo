@@ -1,6 +1,7 @@
 const {GraphQLObjectType,GraphQLList,GraphQLID, GraphQLBoolean, GraphQLString, GraphQLFloat} = require('graphql')
 const { findAllUniversity } = require('../resolvers/university.resolvers')
-const { UniversityResultType } = require('./schema.gql')
+const { UniversityResultType, DepartmentResultType } = require('./schema.gql')
+const { getAllDepertement } = require('../resolvers/deparetement.resolvers')
 
 
 const QueryType = new GraphQLObjectType({
@@ -9,6 +10,10 @@ const QueryType = new GraphQLObjectType({
         findAllUniversity : {
             type : new GraphQLList(UniversityResultType),
             resolve : findAllUniversity
+        },
+        getAllDepertement : {
+            type : new GraphQLList(DepartmentResultType),
+            resolve : getAllDepertement
         },
         Hello : {
             type : GraphQLString,

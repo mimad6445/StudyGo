@@ -37,7 +37,7 @@ const createAdmin = async(_,{admin})=>{
     }
 } // Valid
 
-const loginUser = async (_, { email, password }) => {
+const loginUser = async (_, { email, password , role }) => {
     try {
         const isEmail = /\S+@\S+\.\S+/.test(email);
         if (!isEmail) {
@@ -64,6 +64,12 @@ const loginUser = async (_, { email, password }) => {
             return {
                 code : 404,
                 message : "User in Active"
+            }
+        }
+        if(existingUser.role === role){
+            return {
+                code : 404,
+                message : "Role not defined"
             }
         }
         const token = await generateToken({ email: existingUser.email, id: existingUser._id, role: existingUser.role });

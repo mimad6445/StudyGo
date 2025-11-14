@@ -28,12 +28,28 @@ const universityInput = new GraphQLInputObjectType({
         name : { type: GraphQLNonNull(GraphQLString) },
         code: { type: GraphQLNonNull(GraphQLString) },
         address : { type: GraphQLNonNull(GraphQLString) },
-        phoneNumber : z.string(),
-        emailUniversity : z.string(),
+        phoneNumber : { type: GraphQLString },
+        emailUniversity : { type: GraphQLString },
+    }
+})
+
+const departementInput =  new GraphQLInputObjectType({
+    name : "DepartementInput",
+    fields : {
+        name: { type: GraphQLNonNull(GraphQLString) },
+        description: { type: GraphQLString },
+        location : { type: GraphQLString },
+        establishedYear : { type: GraphQLString },
+        email :  { type: GraphQLString },
+        emailUniversity : { type: GraphQLString },
+        phoneNumber : { type: GraphQLString },
+        password : { type: GraphQLString }
     }
 })
 
 
 module.exports = {
-    adminInput
+    adminInput,
+    universityInput,
+    departementInput
 }

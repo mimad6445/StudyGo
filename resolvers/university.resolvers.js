@@ -35,44 +35,14 @@ const AddUniversity = async (_,{universityInput},{context})=>{
     }
 }
 
-const loginUniversity = async (_,{email,password})=>{
-    try {
-        const isEmail = /\S+@\S+\.\S+/.test(email);
-        if (!isEmail) {
-            return {
-                code : 300,
-                message: "Invalid email format."
-            };
-        }
-        const existingUniversity = await University.findOne({ email });
-        if (!existingUniversity) {
-            return {
-                code : 404,
-                message: "University not found."
-            };
-        }
-        const isMatch = await bcrypt.compare(password, existingUniversity.password);
-        if (!isMatch) {
-            return {
-                code : 301,
-                message: "Invalid password."
-            };
-        }
-        const token = await generateToken({ email: existingUniversity.email, id: existingUniversity._id, role: 'university' });
-        return {
-            token,
-            user: existingUniversity
-        };
-    } catch (error) {
-        return {
-            code : 500,
-            message : "Internal server Error"
-        }
-    }
-}
-
 const findAllUniversity = async (_,__,{context})=>{
     try {
+        if(!context.user){
+            return {
+                code : 401,
+                message : "Unauthorized User GOAT"
+            }
+        }
         const allUniversity = await University.find()
         return allUniversity
     } catch (error) {
@@ -144,7 +114,6 @@ const DeleteUniversity = async (_, { id }, context) => {
 
 module.exports = {
     AddUniversity,
-    loginUniversity,
     findAllUniversity,
     UpdateUniversity,
     DeleteUniversity

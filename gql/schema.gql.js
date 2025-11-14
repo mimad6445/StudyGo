@@ -298,6 +298,7 @@ const UniversityResultType = new GraphQLUnionType({
 ============================ */
 
 module.exports = {
+    ErrorType,
     AuthPayloadResultType,
     StudentResultType,
     ModuleResultType,

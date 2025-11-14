@@ -1,7 +1,8 @@
-const { description } = require('../gql/query.gql');
+const AccountModel = require('../models/Account.model');
 const departement = require('../models/departement.model');
+const University = require('../models/university.model');
 const { AddDepartement } = require('../validation/departement.validation');
-
+const mongoose = require("mongoose")
 
 
 const getAllDepertement = async (_,{},context) => {
@@ -23,11 +24,20 @@ const getAllDepertement = async (_,{},context) => {
 }
 
 const CreateDepartement = async (_,{universityId,departementInput},context)=>{
+    const session = await mongoose.startSession();
+    session.startTransaction();
     try {
         if (!context.user) {
             return {
                 code: 403,
                 message: "Unauthorized",
+            };
+        }
+        const existingUniversity = await University.findById(universityId)
+        if(!existingUniversity || context.user.id === universityId ){
+            return {
+                code: 404,
+                message: "University Not Found",
             };
         }
         const parseResult = AddDepartement.safeParse(departementInput)
@@ -37,50 +47,28 @@ const CreateDepartement = async (_,{universityId,departementInput},context)=>{
                 message : "Validation error: " + parseResult.error.message
             }
         }
-        const { name, description, location, email, password} = parseResult.data
+        const { name, description, location, email,emailUniversity,phoneNumber, password} = parseResult.data
         const hashedpassword = await bcrypt.hash(password , 10)
         const newDepartement = new departement({
-            name,description,location,universityId,email,password:hashedpassword
+            name,description,location,universityId
         })
-        await newDepartement.save()
+        const newAccount = await AccountModel({
+            fullName : name,
+            email : email,
+            emailUniversity,
+            phoneNumber,
+            password : hashedpassword
+        })
+        existingUniversity.departements.push(newDepartement._id)
+        await newDepartement.save({ session })
+        await existingUniversity.save({ session })
+        await newAccount.save({ session })
+        await session.commitTransaction();
+        await session.endSession();
         return newDepartement
     } catch (error) {
-        return {
-            code: 500,
-            message: "Internal server error",
-        };
-    }
-}
-
-const loginDepartement = async (_,{email,password})=>{
-    try{
-        const isEmail = /\S+@\S+\.\S+/.test(email);
-        if (!isEmail) {
-            return {
-                code : 300,
-                message: "Invalid email format."
-            };
-        }
-        const existingDepartement = await departement.findOne({ email });
-        if (!existingDepartement) {
-            return {
-                code : 404,
-                message: "Departement not found."
-            };
-        }
-        const isMatch = await bcrypt.compare(password, existingDepartement.password);
-        if (!isMatch) {
-            return {
-                code : 301,
-                message: "Invalid password."
-            };
-        }
-        const token = await generateToken({ email: existingDepartement.email, id: existingDepartement._id, role: 'departement' });
-        return {
-            token,
-            user: existingDepartement
-        };
-    }catch(error){
+        await session.abortTransaction();
+        session.endSession();
         return {
             code: 500,
             message: "Internal server error",
@@ -91,6 +79,4 @@ const loginDepartement = async (_,{email,password})=>{
 module.exports = {
     getAllDepertement,
     CreateDepartement,
-    loginDepartement,
-    
 };

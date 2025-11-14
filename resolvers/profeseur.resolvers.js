@@ -17,7 +17,7 @@ const createProfeseur = async (_,{departementId,profeseurInput},context)=>{
             if(existingProfeseur.departementId !== departementId){
                 // make a request to check if the profeseur is in another departement
                 return {
-                    code : 409,
+                    code : 410,
                     message : "Profeseur with this university email already exists in another departement"
                 }
             }
