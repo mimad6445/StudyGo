@@ -178,6 +178,15 @@ const YearAcademicType = new GraphQLObjectType({
     })
 });
 
+const YearAcademicResultYear = new GraphQLUnionType({
+    name : "YearAcadimicResult",
+    types: [YearAcademicType, ErrorType],
+    resolveType(value) {
+        if (value.message) return ErrorType;
+        return YearAcademicType;
+    }
+})
+
 /* ============================
    GROUP
 ============================ */
@@ -255,6 +264,7 @@ const DepartmentType = new GraphQLObjectType({
         sections: { type: new GraphQLList(SectionType) },
         modules: { type: new GraphQLList(ModuleType) },
         userId: { type: AccountType },
+        yearAcademic : { type : new GraphQLList(YearAcademicType)}
     }
 });
 
@@ -311,4 +321,5 @@ module.exports = {
     ModuleType,
     SectionType,
     UniversityType,
+    YearAcademicResultYear
 };

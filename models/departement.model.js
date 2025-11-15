@@ -11,6 +11,7 @@ const departementSchema = new mongoose.Schema({
     sections : [{ type : mongoose.Types.ObjectId , ref: "Section"}],
     modules : [{ type : mongoose.Types.ObjectId , ref : "Module"}],
     userId : { type : mongoose.Types.ObjectId , ref : "Account", required : true },
+    acadimicYear : [{ type : mongoose.Types.ObjectId , ref : "AcadimicYear"}]
 },{ timestamps : true})
 
 const departement = mongoose.model('departement',departementSchema)

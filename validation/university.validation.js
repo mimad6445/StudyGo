@@ -7,8 +7,10 @@ const addUniversity = z.object({
     name : z.string(),
     code: z.string().optional(),
     address : z.string(),
-    phoneNumber : z.string(),
+    email : z.string().optional(),
     emailUniversity : z.string(),
+    phoneNumber : z.string(),
+    password : z.string()
 })
 
 module.exports = {

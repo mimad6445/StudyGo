@@ -4,6 +4,7 @@ const mongoose = require("mongoose")
 const SectionSchema = new mongoose.Schema({
     departementId : { type : mongoose.Types.ObjectId , ref : "departement"},
     yearAcadimic : { type : mongoose.Types.ObjectId , ref : "AcadimicYear"},
+    name : { type : String },
     System : { type: String, enum:["LMD","Classic"] , required: true },
     Niveaux : { type: String , required: true},
     isSpeciality : { type : Boolean , default : false},

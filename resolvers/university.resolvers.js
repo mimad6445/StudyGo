@@ -1,36 +1,55 @@
+const AccountModel = require("../models/Account.model.js")
 const University = require("../models/university.model.js")
 const { addUniversity } = require("../validation/university.validation")
 const bcrypt = require("bcryptjs")
+const mongoose = require("mongoose")
 
-const AddUniversity = async (_,{universityInput},{context})=>{
+const AddUniversity = async (_,{universityInput},context)=>{
     try {
+        const session = await mongoose.startSession();
+        session.startTransaction();
+        
         if(!context.user || context.user.role !== 'GOAT'){
             return {
                 message: "Error creating pub: Admin is not authorized"
             };
         }
         const parsedata = addUniversity.safeParse(universityInput)
-        if(!parsedata){
+        if(!parsedata.success){
             return {
                 code : 401,
-                message : "Validation error: " + parseResult.error.message
+                message : "Validation error: " + parsedata.error.message
             }
         }
-        const { name , code , address , phoneNumber , emailUniversity , email , password } = parsedata.data
+        console.log("-----------------------------------------2",parsedata);
+        const { name , code , address , phoneNumber , emailUniversity , email , password , establishedYear} = parsedata.data
         const hashedpassword = await bcrypt.hash(password , 10)
         const newUniversity = new University({
-            name,code,address,email,emailUniversity,phoneNumber,password:hashedpassword
+            name,code,address,emailUniversity,establishedYear
         })
-        await newUniversity.save()
-        const token = await generateToken({ email: newUniversity.email, id: newUniversity._id , role : 'university'});
-        return {
-            token,
-            university : newUniversity
-        }
+        
+        console.log("-----------------------------------------3");
+        const newAccount = new AccountModel({
+            fullName : name,
+            email : email,
+            emailUniversity,
+            phoneNumber,
+            password : hashedpassword,
+            role : "SuperAdmin"
+        })
+        newUniversity.userId = newAccount._id
+        await newUniversity.save({ session })
+        await newAccount.save({ session })
+        await session.commitTransaction();
+        await session.endSession();
+
+        return newUniversity
     } catch (error) {
+        console.log("error ----------",error);
+        
         return {
             code : 500,
-            message : "Internal server Error"
+            message : "Internal server Error "+error.message
         }
     }
 }
@@ -43,8 +62,34 @@ const findAllUniversity = async (_,__,{context})=>{
                 message : "Unauthorized User GOAT"
             }
         }
-        const allUniversity = await University.find()
-        return allUniversity
+        const universities = await University.find()
+            .populate("departements")   // Populate departements
+            .populate("userId")         // Populate creator account
+            .populate({
+                path: "departements",
+                populate: [
+                    { path: "rooms" },
+                    { path: "sections" },
+                    { path: "modules" },
+                    { path: "userId" },
+                    { 
+                        path: "sections",
+                        populate: [
+                            { path: "users" },
+                            { path: "Groups" },
+                            { path: "Schedule" },
+                            { path: "files" },
+                            { 
+                                path: "professeur.data", 
+                            },
+                            {
+                                path: "professeur.module"
+                            }
+                        ]
+                    }
+                ]
+            });
+        return universities
     } catch (error) {
         return {
             code : 500,

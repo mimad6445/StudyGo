@@ -30,6 +30,7 @@ const universityInput = new GraphQLInputObjectType({
         address : { type: GraphQLNonNull(GraphQLString) },
         phoneNumber : { type: GraphQLString },
         emailUniversity : { type: GraphQLString },
+        password : { type: GraphQLString },
     }
 })
 
@@ -47,9 +48,20 @@ const departementInput =  new GraphQLInputObjectType({
     }
 })
 
+const SectionInput = new GraphQLInputObjectType({
+    name : "SectionInput",
+    fields : {
+        yearAcadimic : { type: GraphQLID},
+        System : { type: GraphQLString },
+        Niveaux : { type: GraphQLString },
+        isSpeciality : { type: GraphQLBoolean },
+        name : { type : GraphQLString }
+    }
+})
 
 module.exports = {
     adminInput,
     universityInput,
-    departementInput
+    departementInput,
+    SectionInput
 }

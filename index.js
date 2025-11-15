@@ -16,6 +16,7 @@ connectDB();
 
 const QueryType = require("./gql/query.gql");
 const MutationType = require("./gql/mutation.gql");
+const { log } = require('console');
 
 const schema = new GraphQLSchema({
     query: QueryType,
@@ -33,6 +34,8 @@ app.use("/graphql",graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 6 }),
         if (authHeader && authHeader.startsWith("Bearer ")) {
             const token = authHeader.split(" ")[1];
             user = await verifyToken(token);
+            console.log("user ",user);
+            
         }
         return {
             schema,

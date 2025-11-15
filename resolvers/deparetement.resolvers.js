@@ -3,6 +3,7 @@ const departement = require('../models/departement.model');
 const University = require('../models/university.model');
 const { AddDepartement } = require('../validation/departement.validation');
 const mongoose = require("mongoose")
+const bcrypt = require("bcryptjs")
 
 
 const getAllDepertement = async (_,{},context) => {
@@ -47,19 +48,21 @@ const CreateDepartement = async (_,{universityId,departementInput},context)=>{
                 message : "Validation error: " + parseResult.error.message
             }
         }
-        const { name, description, location, email,emailUniversity,phoneNumber, password} = parseResult.data
+        const { name, description, location, email,emailUniversity,phoneNumber, password, establishedYear} = parseResult.data
         const hashedpassword = await bcrypt.hash(password , 10)
         const newDepartement = new departement({
-            name,description,location,universityId
+            name,description,location,universityId,establishedYear
         })
         const newAccount = await AccountModel({
             fullName : name,
             email : email,
             emailUniversity,
             phoneNumber,
-            password : hashedpassword
+            password : hashedpassword,
+            role : "Admin"
         })
         existingUniversity.departements.push(newDepartement._id)
+        newDepartement.userId = newAccount._id
         await newDepartement.save({ session })
         await existingUniversity.save({ session })
         await newAccount.save({ session })
@@ -71,7 +74,7 @@ const CreateDepartement = async (_,{universityId,departementInput},context)=>{
         session.endSession();
         return {
             code: 500,
-            message: "Internal server error",
+            message: "Internal server error "+ error.message,
         };
     }
 }

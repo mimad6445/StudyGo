@@ -2,6 +2,7 @@ const {GraphQLObjectType,GraphQLList,GraphQLID, GraphQLBoolean, GraphQLString, G
 const { findAllUniversity } = require('../resolvers/university.resolvers')
 const { UniversityResultType, DepartmentResultType } = require('./schema.gql')
 const { getAllDepertement } = require('../resolvers/deparetement.resolvers')
+const { getAllSectionByDepartementId } = require('../resolvers/section.resolvers')
 
 
 const QueryType = new GraphQLObjectType({
@@ -14,6 +15,14 @@ const QueryType = new GraphQLObjectType({
         getAllDepertement : {
             type : new GraphQLList(DepartmentResultType),
             resolve : getAllDepertement
+        },
+        getAllSectionByDepartementId: {
+            type : DepartmentResultType,
+            args:{
+                departementId : { type : GraphQLID},
+                AcadimicYearId: { type : GraphQLID},
+            },
+            resolve : getAllSectionByDepartementId
         },
         Hello : {
             type : GraphQLString,

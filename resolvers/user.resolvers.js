@@ -66,7 +66,7 @@ const loginUser = async (_, { email, password , role }) => {
                 message : "User in Active"
             }
         }
-        if(existingUser.role === role){
+        if(existingUser.role !== role){
             return {
                 code : 404,
                 message : "Role not defined"

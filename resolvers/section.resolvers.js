@@ -1,3 +1,4 @@
+const AcadimicYear = require("../models/AcadimicYear.model");
 const departement = require("../models/departement.model");
 const section = require("../models/Section.model");
 const Section = require("../models/Section.model");
@@ -9,7 +10,8 @@ const CreateSection = async(_,{departementId,SectionInput},context)=>{
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
-        if(!context.user || context.user.id !== departementId ){
+        
+        if(!context.user ){
             return {
                 code: 403,
                 message: "Unauthorized",
@@ -23,20 +25,29 @@ const CreateSection = async(_,{departementId,SectionInput},context)=>{
             }
         }
         const parseResult = addSection.safeParse(SectionInput)
-        if(!parseResult){
+        if(!parseResult.success){
             return {
                 code : 401,
                 message : "Validation error: " + parseResult.error.message
             }
         }
-        const { yearAcadimic, System, Niveaux, isSpeciality } = parseResult.data
+        const { yearAcadimic, System, Niveaux, isSpeciality , name} = parseResult.data
+        const existingYearAcadimic = await AcadimicYear.findById(yearAcadimic)
+        if(!existingYearAcadimic || !existingYearAcadimic.isCurrent){
+            return {
+                code : 404,
+                message : "The Year Acadimic is not current"
+            }
+        }
         const serverId = crypto.randomBytes(4).toString('hex').toUpperCase();
         const newSection = new Section({
-            yearAcadimic,Niveaux,System,isSpeciality,serverId,departementId
+            yearAcadimic,Niveaux,System,isSpeciality,serverId,departementId,name
         })
         departementExisting.sections.push(newSection._id)
         await newSection.save({ session })
         await departementExisting.save({ session })
+        await session.commitTransaction();
+        await session.endSession();
         return newSection
     } catch (error) {
         await session.abortTransaction();
@@ -44,12 +55,12 @@ const CreateSection = async(_,{departementId,SectionInput},context)=>{
         console.error(error);
         return {
             code: 500,
-            message: "Internal server error",
+            message: "Internal server error "+error.message,
         };
     }
 }
 
-const getAllSectionByDepartementId = async (_,{departementId},context)=>{
+const getAllSectionByDepartementId = async (_,{departementId,AcadimicYearId},context)=>{
     try {
         if(!context.user || context.user.id !== departementId){
             return {
@@ -57,21 +68,46 @@ const getAllSectionByDepartementId = async (_,{departementId},context)=>{
                 message: "Unauthorized",
             };
         }
-        const departementExisting = await departement.findById(departementId)
-        if(!departementExisting){
+        const exisistingAcadimicYear = await AcadimicYear.findById(AcadimicYearId)
+        if(!exisistingAcadimicYear){
+            return {
+                code: 404,
+                message: "Acadimic Year Not Found",
+            };
+        }
+        const departementExisting = await departement
+            .findById(departementId)
+            .populate({
+                path: "sections",
+                populate: [
+                    { path: "users" },
+                    { path: "Groups" },
+                    { path: "Schedule" },
+                    { path: "files" },
+                    {
+                        path: "professeur.data",
+                    },
+                    {
+                        path: "professeur.module",
+                    }
+                ]
+            });
+
+        if (!departementExisting) {
             return {
                 code: 404,
                 message: "Departement Not Found",
             };
         }
-        const DepartementSections = await section.find({ departementId })
-        if(!DepartementSections){
+
+        if (!departementExisting.sections || departementExisting.sections.length === 0) {
             return {
-                code : 404,
-                message : "No Sctions Created"
-            }
+                code: 404,
+                message: "No Sections Found For This Departement",
+            };
         }
-        return DepartementSections
+
+        return departementExisting;
     } catch (error) {
         console.error(error);
         return {
@@ -100,3 +136,7 @@ const loginSection = async (_,{serverId})=>{
     }
 }
 
+module.exports = {
+    CreateSection,
+    getAllSectionByDepartementId
+}
