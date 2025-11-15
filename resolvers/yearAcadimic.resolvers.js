@@ -36,6 +36,31 @@ const addAcadimicYear = async (_,{startYear,endYear,semester,departementId},cont
     }
 }
 
+const getAcadimicYearByDepartementId = async (_,{deparetementId},context)=>{
+    try{
+        if(!context.user){
+            return {
+                code: 403,
+                message: "Unauthorized",
+            };
+        }
+        const yearAcadimic = new AcadimicYear.find({ deparetementId })
+        if(!yearAcadimic){
+            return {
+                code: 403,
+                message: "Unauthorized",
+            };
+        }
+        return yearAcadimic
+    }catch(error){
+        return {
+            code: 500,
+            message: "Internal server error "+ error.message,
+        };
+    }
+}
+
 module.exports = {
-    addAcadimicYear
+    addAcadimicYear,
+    getAcadimicYearByDepartementId
 }
