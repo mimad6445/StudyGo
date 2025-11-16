@@ -17,7 +17,7 @@ const AddUniversity = async (_,{universityInput},context)=>{
         const parsedata = addUniversity.safeParse(universityInput)
         if(!parsedata.success){
             return {
-                code : 401,
+                Errorcode : 401,
                 message : "Validation error: " + parsedata.error.message
             }
         }
@@ -48,7 +48,7 @@ const AddUniversity = async (_,{universityInput},context)=>{
         console.log("error ----------",error);
         
         return {
-            code : 500,
+            Errorcode : 500,
             message : "Internal server Error "+error.message
         }
     }
@@ -58,7 +58,7 @@ const findAllUniversity = async (_,__,{context})=>{
     try {
         if(!context.user){
             return {
-                code : 401,
+                Errorcode : 401,
                 message : "Unauthorized User GOAT"
             }
         }
@@ -92,7 +92,7 @@ const findAllUniversity = async (_,__,{context})=>{
         return universities
     } catch (error) {
         return {
-            code : 500,
+            Errorcode : 500,
             message : "Internal server Error"
         }
     }
@@ -103,7 +103,7 @@ const UpdateUniversity = async (_, { universityInput }, context) => {
         const { id, name, location, email, phone } = universityInput;
         if (!context.user) {
             return {
-                code: 401,
+                Errorcode: 401,
                 message: "Unauthorized",
             };
         }
@@ -114,7 +114,7 @@ const UpdateUniversity = async (_, { universityInput }, context) => {
         );
         if (!updatedUniversity) {
             return {
-                code: 404,
+                Errorcode: 404,
                 message: "University not found",
             };
         }
@@ -132,25 +132,25 @@ const DeleteUniversity = async (_, { id }, context) => {
     try {
         if (!context.user) {
             return {
-                code: 401,
+                Errorcode: 401,
                 message: "Unauthorized",
             };
         }
         const deletedUniversity = await University.findByIdAndDelete(id);
         if (!deletedUniversity) {
             return {
-                code: 404,
+                Errorcode: 404,
                 message: "University not found",
             };
         }
         return {
-            code: 200,
+            Errorcode: 200,
             message: "University deleted successfully",
         };
     } catch (error) {
         console.error(error);
         return {
-            code: 500,
+            Errorcode: 500,
             message: "Internal server error",
         };
     }

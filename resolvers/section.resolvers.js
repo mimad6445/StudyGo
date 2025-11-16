@@ -13,21 +13,21 @@ const CreateSection = async(_,{departementId,SectionInput},context)=>{
         
         if(!context.user ){
             return {
-                code: 403,
+                Errorcode: 403,
                 message: "Unauthorized",
             };
         }
         const departementExisting = await departement.findById(departementId)
         if(!departementExisting){
             return {
-                code :404,
+                Errorcode :404,
                 message : "Departement Not found"
             }
         }
         const parseResult = addSection.safeParse(SectionInput)
         if(!parseResult.success){
             return {
-                code : 401,
+                Errorcode : 401,
                 message : "Validation error: " + parseResult.error.message
             }
         }
@@ -35,7 +35,7 @@ const CreateSection = async(_,{departementId,SectionInput},context)=>{
         const existingYearAcadimic = await AcadimicYear.findById(yearAcadimic)
         if(!existingYearAcadimic || !existingYearAcadimic.isCurrent){
             return {
-                code : 404,
+                Errorcode : 404,
                 message : "The Year Acadimic is not current"
             }
         }
@@ -54,7 +54,7 @@ const CreateSection = async(_,{departementId,SectionInput},context)=>{
         session.endSession();
         console.error(error);
         return {
-            code: 500,
+            Errorcode: 500,
             message: "Internal server error "+error.message,
         };
     }
@@ -64,14 +64,14 @@ const getAllSectionByDepartementId = async (_,{departementId,AcadimicYearId},con
     try {
         if(!context.user || context.user.id !== departementId){
             return {
-                code: 403,
+                Errorcode: 403,
                 message: "Unauthorized",
             };
         }
         const exisistingAcadimicYear = await AcadimicYear.findById(AcadimicYearId)
         if(!exisistingAcadimicYear){
             return {
-                code: 404,
+                Errorcode: 404,
                 message: "Acadimic Year Not Found",
             };
         }
@@ -95,14 +95,14 @@ const getAllSectionByDepartementId = async (_,{departementId,AcadimicYearId},con
 
         if (!departementExisting) {
             return {
-                code: 404,
+                Errorcode: 404,
                 message: "Departement Not Found",
             };
         }
 
         if (!departementExisting.sections || departementExisting.sections.length === 0) {
             return {
-                code: 404,
+                Errorcode: 404,
                 message: "No Sections Found For This Departement",
             };
         }
@@ -111,7 +111,7 @@ const getAllSectionByDepartementId = async (_,{departementId,AcadimicYearId},con
     } catch (error) {
         console.error(error);
         return {
-            code: 500,
+            Errorcode: 500,
             message: "Internal server error",
         };
     }
@@ -122,7 +122,7 @@ const loginSection = async (_,{serverId})=>{
         const exisistingSection = await section.findOne({ serverId })
         if(!exisistingSection){
             return {
-                code : 404,
+                Errorcode : 404,
                 message : "No Sctions Created"
             }
         }
@@ -130,7 +130,7 @@ const loginSection = async (_,{serverId})=>{
     } catch (error) {
         console.error(error);
         return {
-            code: 500,
+            Errorcode: 500,
             message: "Internal server error",
         };
     }

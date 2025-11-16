@@ -59,9 +59,20 @@ const SectionInput = new GraphQLInputObjectType({
     }
 })
 
+const moduleInput = new GraphQLInputObjectType({
+    name : "moduleIbput",
+    fields : {
+        name: { type : GraphQLString },
+        code: { type : GraphQLString }, // optional, e.g., "CS101"
+        Coef : { type : GraphQLInt },
+        Credites : { type : GraphQLInt }
+    }
+})
+
 module.exports = {
     adminInput,
     universityInput,
     departementInput,
-    SectionInput
+    SectionInput,
+    moduleInput
 }

@@ -10,7 +10,7 @@ const getAllDepertement = async (_,{},context) => {
     try{
         if(!context.user){
             return {
-                code: 403,
+                Errorcode: 403,
                 message: "Unauthorized",
             };
         }
@@ -18,7 +18,7 @@ const getAllDepertement = async (_,{},context) => {
         return departements
     }catch(error){
         return {
-            code: 500,
+            Errorcode: 500,
             message: "Internal server error",
         };
     }
@@ -30,21 +30,21 @@ const CreateDepartement = async (_,{universityId,departementInput},context)=>{
     try {
         if (!context.user) {
             return {
-                code: 403,
+                Errorcode: 403,
                 message: "Unauthorized",
             };
         }
         const existingUniversity = await University.findById(universityId)
         if(!existingUniversity || context.user.id === universityId ){
             return {
-                code: 404,
+                Errorcode: 404,
                 message: "University Not Found",
             };
         }
         const parseResult = AddDepartement.safeParse(departementInput)
         if(!parseResult){
             return {
-                code : 401,
+                Errorcode : 401,
                 message : "Validation error: " + parseResult.error.message
             }
         }
@@ -73,7 +73,7 @@ const CreateDepartement = async (_,{universityId,departementInput},context)=>{
         await session.abortTransaction();
         session.endSession();
         return {
-            code: 500,
+            Errorcode: 500,
             message: "Internal server error "+ error.message,
         };
     }

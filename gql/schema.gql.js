@@ -16,7 +16,7 @@ const {
 const ErrorType = new GraphQLObjectType({
     name: 'Error',
     fields: {
-        code: { type: GraphQLInt },
+        Errorcode: { type: GraphQLInt },
         message: { type: GraphQLString },
     },
 });

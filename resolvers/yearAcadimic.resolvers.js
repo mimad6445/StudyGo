@@ -8,14 +8,14 @@ const addAcadimicYear = async (_,{startYear,endYear,semester,departementId},cont
             session.startTransaction();
         if (!context.user) {
             return {
-                code: 403,
+                Errorcode: 403,
                 message: "Unauthorized",
             };
         }
         const existingDepartement = await deparetement.findById(departementId)
         if(!existingDepartement){
             return {
-                code : 404,
+                Errorcode : 404,
                 message: "Departement not found."
             };
         }
@@ -30,7 +30,7 @@ const addAcadimicYear = async (_,{startYear,endYear,semester,departementId},cont
         await session.abortTransaction();
         session.endSession();
         return {
-            code: 500,
+            Errorcode: 500,
             message: "Internal server error "+ error.message,
         };
     }

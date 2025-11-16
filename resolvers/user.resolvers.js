@@ -42,33 +42,33 @@ const loginUser = async (_, { email, password , role }) => {
         const isEmail = /\S+@\S+\.\S+/.test(email);
         if (!isEmail) {
             return {
-                code : 400,
+                Errorcode : 400,
                 message: "Invalid email format."
             };
         }
         const existingUser = await user.findOne({ email });
         if (!existingUser) {
             return {
-                code : 404,
+                Errorcode : 404,
                 message: "User not found."
             };
         }
         const isMatch = await bcrypt.compare(password, existingUser.password);
         if (!isMatch) {
             return {
-                code : 404,
+                Errorcode : 404,
                 message: "Invalid password."
             };
         }
         if(!existingUser.isActive){
             return {
-                code : 404,
+                Errorcode : 404,
                 message : "User in Active"
             }
         }
         if(existingUser.role !== role){
             return {
-                code : 404,
+                Errorcode : 404,
                 message : "Role not defined"
             }
         }
@@ -90,7 +90,7 @@ const getCurrentUser = ()=>{
 
     }catch(error){
         return {
-            code : 500,
+            Errorcode : 500,
             message : "Internal server Error : " + error
         }
     }
@@ -102,7 +102,7 @@ const getAllUsers = async()=>{
         return users
     } catch (error) {
         return {
-            code : 500,
+            Errorcode : 500,
             message : "Internal server Error : " + error
         }
     }
@@ -112,21 +112,21 @@ const CreateStudent = async(_,{userInput,sectionId, departementId,yearAcadimic},
     try {
         if (!context.user) {
             return {
-                code: 403,
+                Errorcode: 403,
                 message: "Unauthorized",
             };
         }
         const parseResult = addStudent.safeParse(userInput);
         if(!parseResult){
             return {
-                code : 401,
+                Errorcode : 401,
                 message : "Validation error: " + parseResult.error.message
             }
         }
         const existingSection = await section.findById(sectionId)
         if(!existingSection){
             return {
-                code : 404,
+                Errorcode : 404,
                 message : "Section Not Found"
             }
         }
@@ -136,7 +136,7 @@ const CreateStudent = async(_,{userInput,sectionId, departementId,yearAcadimic},
         });
         if(!existingDepartement){
             return {
-                code : 404,
+                Errorcode : 404,
                 message : "departement Not Found"
             }
         }
@@ -145,7 +145,7 @@ const CreateStudent = async(_,{userInput,sectionId, departementId,yearAcadimic},
         const findingUser = await user.findOne({emailUniversity})
         if(findingUser){
             return {
-                code : 404,
+                Errorcode : 404,
                 message : "Already Exisit"
             }
         }
@@ -156,7 +156,7 @@ const CreateStudent = async(_,{userInput,sectionId, departementId,yearAcadimic},
         return newUser;
     } catch (error) {
         return {
-            code : 500,
+            Errorcode : 500,
             message : "Internal server Error : " + error
         }
     }
@@ -168,14 +168,14 @@ const getUserId = async (_,{userId})=>{
         const existingUser = await user.findById(userId)
         if(!existingUser){
             return {
-                code : 404,
+                Errorcode : 404,
                 message : "user Not Found"
             }
         }
         return existingUser
     }catch(error){
         return {
-            code : 500,
+            Errorcode : 500,
             message : "Internal server Error : " + error
         }
     }
@@ -187,7 +187,7 @@ const getAllStudentBySectionId = async (_,{SectionId})=>{
         return AllStudent;
     } catch (error) {
         return {
-            code : 500,
+            Errorcode : 500,
             message : "Internal server Error : " + error
         }
     }

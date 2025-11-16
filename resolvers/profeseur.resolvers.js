@@ -8,7 +8,7 @@ const createProfeseur = async (_,{departementId,profeseurInput},context)=>{
     try {
         if(!context.user){
             return {
-                code: 403,
+                Errorcode: 403,
                 message: "Unauthorized",
             };
         }
@@ -17,13 +17,13 @@ const createProfeseur = async (_,{departementId,profeseurInput},context)=>{
             if(existingProfeseur.departementId !== departementId){
                 // make a request to check if the profeseur is in another departement
                 return {
-                    code : 410,
+                    Errorcode : 410,
                     message : "Profeseur with this university email already exists in another departement"
                 }
             }
             if(existingProfeseur.role === 'Teacher'){
                 return {
-                    code : 409,
+                    Errorcode : 409,
                     message : "Profeseur with this university email already exists"
                 }
             }
@@ -31,7 +31,7 @@ const createProfeseur = async (_,{departementId,profeseurInput},context)=>{
         const safeParse = addProffesor.safeParse(profeseurInput);
         if(!safeParse.success){
             return {
-                code : 401,
+                Errorcode : 401,
                 message : "Validation error: " + safeParse.error.message
             }
         }
@@ -54,7 +54,7 @@ const getAllProfeseurByDepartementId = async (_,{departementId},context) => {
     try{
         if(!context.user || context.user.id !== departementId){
             return {
-                code: 403,
+                Errorcode: 403,
                 message: "Unauthorized",
             };
         }
@@ -63,7 +63,7 @@ const getAllProfeseurByDepartementId = async (_,{departementId},context) => {
     }catch(error){
         console.error(error);
         return {
-            code: 500,
+            Errorcode: 500,
             message: "Internal server error",
         };
     }
@@ -73,14 +73,14 @@ const getProfeseurById = async (_,{profeseurId},context) => {
     try{
         if(!context.user || context.user.role !== 'admin'){
             return {
-                code: 403,
+                Errorcode: 403,
                 message: "Unauthorized",
             };
         }
         const profeseur = await user.findById(profeseurId);
         if(!profeseur || profeseur.role !== 'Teacher'){
             return {
-                code: 404,
+                Errorcode: 404,
                 message: "Profeseur Not Found",
             };
         }
@@ -88,7 +88,7 @@ const getProfeseurById = async (_,{profeseurId},context) => {
     }catch(error){
         console.error(error);
         return {
-            code: 500,
+            Errorcode: 500,
             message: "Internal server error",
         };
     }
@@ -99,13 +99,13 @@ const loginProfeseur = async (_,{email,password})=>{
         const existingProfeseur = await user.findOne({ email, role: 'Teacher' });
         if(!existingProfeseur){
             return {
-                code : 404,
+                Errorcode : 404,
                 message : "Profeseur Not Found"
             }
         }
         if(existingProfeseur.password !== password){
             return {
-                code : 301,
+                Errorcode : 301,
                 message : "Invalid Password"
             }
         }
@@ -113,7 +113,7 @@ const loginProfeseur = async (_,{email,password})=>{
     } catch (error) {
         console.error(error);
         return {
-            code: 500,
+            Errorcode: 500,
             message: "Internal server error",
         };
     }
@@ -124,7 +124,7 @@ const UpdateProfeseur = async (_, { ProffeseurId , profeseurInput }, context) =>
         const { name, contact, emailUniversity , dateOfBirth , city} = profeseurInput;
         if (!context.user || context.user.id !== id) {
             return {
-                code: 401,
+                Errorcode: 401,
                 message: "Unauthorized",
             };
         }
@@ -134,7 +134,7 @@ const UpdateProfeseur = async (_, { ProffeseurId , profeseurInput }, context) =>
         );
         if (!updatedProfeseur) {
             return {
-                code: 404,
+                Errorcode: 404,
                 message: "Profeseur not found",
             };
         }
@@ -142,7 +142,7 @@ const UpdateProfeseur = async (_, { ProffeseurId , profeseurInput }, context) =>
     } catch (error) {
         console.error(error);
         return {
-            code: 500,
+            Errorcode: 500,
             message: "Internal server error",
         };
     }
@@ -152,25 +152,25 @@ const deleteProfeseur = async (_, { profeseurId }, context) => {
     try {
         if (!context.user || context.user.role !== 'admin') {
             return {
-                code: 401,
+                Errorcode: 401,
                 message: "Unauthorized",
             };
         }
         const deletedProfeseur = await user.findByIdAndDelete(profeseurId);
         if (!deletedProfeseur) {
             return {
-                code: 404,
+                Errorcode: 404,
                 message: "Profeseur not found",
             };
         }
         return {
-            code: 200,
+            Errorcode: 200,
             message: "Profeseur deleted successfully",
         };
     } catch (error) {
         console.error(error);
         return {
-            code: 500,
+            Errorcode: 500,
             message: "Internal server error",
         };
     }
@@ -180,14 +180,14 @@ const ProfeseurModules = async (_,{profeseurId},context) => {
     try{
         if(!context.user){
             return {
-                code: 403,
+                Errorcode: 403,
                 message: "Unauthorized",
             };
         }
         const profeseur = await user.findById(profeseurId).populate('Modules');
         if(!profeseur || profeseur.role !== 'Teacher'){
             return {
-                code: 404,
+                Errorcode: 404,
                 message: "Profeseur Not Found",
             };
         }
@@ -195,7 +195,7 @@ const ProfeseurModules = async (_,{profeseurId},context) => {
     }catch(error){
         console.error(error);
         return {
-            code: 500,
+            Errorcode: 500,
             message: "Internal server error",
         };
     }
@@ -205,14 +205,14 @@ const ProfeseurSections = async (_,{profeseurId},context) => {
     try{
         if(!context.user){
             return {
-                code: 403,
+                Errorcode: 403,
                 message: "Unauthorized",
             };
         }
         const profeseur = await user.findById(profeseurId).populate('section');
         if(!profeseur || profeseur.role !== 'Teacher'){
             return {
-                code: 404,
+                Errorcode: 404,
                 message: "Profeseur Not Found",
             };
         }
@@ -220,7 +220,7 @@ const ProfeseurSections = async (_,{profeseurId},context) => {
     }catch(error){
         console.error(error);
         return {
-            code: 500,
+            Errorcode: 500,
             message: "Internal server error",
         };
     }
@@ -230,28 +230,28 @@ const AddProffesorToSection = async (_,{profeseurId,sectionId,moduleId},context)
     try{
         if(!context.user){
             return {
-                code: 403,
+                Errorcode: 403,
                 message: "Unauthorized",
             };
         }
         const profeseur = await user.findById(profeseurId);
         if(!profeseur || profeseur.role !== 'Teacher'){
             return {
-                code: 404,
+                Errorcode: 404,
                 message: "Profeseur Not Found",
             };
         }
         const sectionExists = await section.findById(sectionId);
         if(!sectionExists){
             return {
-                code: 404,
+                Errorcode: 404,
                 message: "Section Not Found",
             };
         }
         const moduleExists = await module.findById(moduleId);
         if(!moduleExists){
             return {
-                code: 404,
+                Errorcode: 404,
                 message: "Module Not Found",
             };
         }
@@ -262,7 +262,7 @@ const AddProffesorToSection = async (_,{profeseurId,sectionId,moduleId},context)
     }catch(error){
         console.error(error);
         return {
-            code: 500,
+            Errorcode: 500,
             message: "Internal server error",
         };
     }

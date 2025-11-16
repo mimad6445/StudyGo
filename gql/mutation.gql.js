@@ -1,11 +1,12 @@
 const {GraphQLObjectType,GraphQLList,GraphQLID, GraphQLInt , GraphQLString , GraphQLNonNull ,GraphQLInputObjectType} = require('graphql');
 const { createAdmin, loginUser } = require('../resolvers/user.resolvers');
-const { AuthPayloadResultType, UniversityResultType, ErrorType, DepartmentResultType, SectionResultType, YearAcademicResultYear } = require('./schema.gql');
-const { adminInput, universityInput, departementInput, SectionInput } = require("./input.gql");
+const { AuthPayloadResultType, UniversityResultType, ErrorType, DepartmentResultType, SectionResultType, YearAcademicResultYear, ModuleResultType } = require('./schema.gql');
+const { adminInput, universityInput, departementInput, SectionInput, moduleInput } = require("./input.gql");
 const { AddUniversity, DeleteUniversity, UpdateUniversity } = require('../resolvers/university.resolvers');
 const { CreateDepartement } = require('../resolvers/deparetement.resolvers');
 const { CreateSection } = require('../resolvers/section.resolvers');
 const { addAcadimicYear } = require('../resolvers/yearAcadimic.resolvers');
+const { CreateModule } = require('../resolvers/module.resolvers');
 
 const Mutation = new GraphQLObjectType({
     name: 'Mutation',
@@ -72,6 +73,14 @@ const Mutation = new GraphQLObjectType({
                 departementId: { type : GraphQLID }
             },
             resolve : addAcadimicYear
+        },
+        CreateModule : {
+            type : ModuleResultType,
+            args : {
+                departementId : { type : GraphQLID },
+                moduleInput : { type : moduleInput }
+            },
+            resolve : CreateModule
         }
     },
 });
