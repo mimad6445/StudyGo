@@ -1,13 +1,20 @@
 const { z, email } = require("zod")
 
 const addProffesor = z.object({
-    name : z.string(),
+    fullName : z.string(),
     email : z.string().optional(),
     emailUniversity : z.string().optional(),
     password : z.string(),
     contact : z.string(),
     dateOfBirth : z.string(),
-    city : z.string()
+    address : z.string(),
+    bloodGroup : z.string().optional(),
+    researchArea : z.string().optional(),
+    linkedIn : z.string().optional(),
+    status : z.string().optional(),
+    degree : z.string(),
+    designation : z.string(),
+    gender : z.string()
 })
 
 const addStudent = z.object({

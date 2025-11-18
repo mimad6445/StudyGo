@@ -3,18 +3,55 @@ const Module = require("../models/module.model");
 const mongoose = require("mongoose");
 const { addModule } = require("../validation/Module.validation");
 
-const getAllModules = async () => {
+const getAllModules = async (_, { departementId, page , limit }, context) => {
     try {
-        const modules = await Module.find();
-        return modules;
+        if (!context.user ) {
+            return {
+                Errorcode: 403,
+                message: "Unauthorized",
+            };
+        }
+
+        const existingDepartement = await departement.findById(departementId).populate("modules");
+        if (!existingDepartement) {
+            return {
+                Errorcode: 404,
+                message: "Departement Not Found",
+            };
+        }
+
+        page = Number(page);
+        limit = Number(limit);
+        const skip = (page - 1) * limit;
+
+        const moduleIds = existingDepartement.modules;
+
+        const modules = await Module.find({ _id: { $in: moduleIds } })
+            .skip(skip)
+            .limit(limit);
+
+        const total = moduleIds.length;
+
+        return {
+            data: modules,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+            }
+        };
+
     } catch (error) {
         console.error(error);
-        return {
+        return [{
             Errorcode: 500,
             message: "Internal server error",
-        };
+        }];
     }
 };
+
+
 
 const getModuleByDepartementId = async (_,{departementId},context) => {
     try{

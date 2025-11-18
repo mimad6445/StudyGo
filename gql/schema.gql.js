@@ -21,6 +21,16 @@ const ErrorType = new GraphQLObjectType({
     },
 });
 
+const PaginationType = new GraphQLObjectType({
+    name : "pagination",
+    fields : {
+        total : { type : GraphQLInt },
+        page : { type : GraphQLInt },
+        limit : { type : GraphQLInt },
+        totalPages : { type : GraphQLInt },
+    }
+})
+
 const FileType = new GraphQLObjectType({
     name: 'File',
     fields: {
@@ -120,6 +130,22 @@ const ModuleResultType = new GraphQLUnionType({
     }
 });
 
+const moduleReturns = new GraphQLObjectType({
+    name : "ModulePagination",
+    fields : {
+        data: { type : new GraphQLList(ModuleType)},
+        pagination: { type : PaginationType }
+    }
+})
+
+const moduleReturnsResult = new GraphQLUnionType({
+    name : "ModulePagResult",
+    types : [moduleReturns,ErrorType],
+    resolveType(value) {
+        if (value.message) return ErrorType;
+        return moduleReturns;
+    }
+})
 /* ============================
    TEACHER
 ============================ */
@@ -127,7 +153,6 @@ const ModuleResultType = new GraphQLUnionType({
 const TeacherType = new GraphQLObjectType({
     name: "Teacher",
     fields: () => ({
-        fullName: { type: GraphQLString },
         dateOfBirth: { type: GraphQLString },
         gender: { type: GraphQLString },
         designation: { type: GraphQLString },
@@ -321,5 +346,6 @@ module.exports = {
     ModuleType,
     SectionType,
     UniversityType,
-    YearAcademicResultYear
+    YearAcademicResultYear,
+    moduleReturnsResult
 };

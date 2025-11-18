@@ -1,9 +1,11 @@
-const {GraphQLObjectType,GraphQLList,GraphQLID, GraphQLBoolean, GraphQLString, GraphQLFloat} = require('graphql')
+const {GraphQLObjectType,GraphQLList,GraphQLID, GraphQLBoolean, GraphQLString, GraphQLInt} = require('graphql')
 const { findAllUniversity } = require('../resolvers/university.resolvers')
-const { UniversityResultType, DepartmentResultType, YearAcademicResultYear } = require('./schema.gql')
+const { UniversityResultType, DepartmentResultType, YearAcademicResultYear, moduleReturnsResult, TeacherResultType } = require('./schema.gql')
 const { getAllDepertement } = require('../resolvers/deparetement.resolvers')
 const { getAllSectionByDepartementId } = require('../resolvers/section.resolvers')
 const { getAcadimicYearByDepartementId } = require('../resolvers/yearAcadimic.resolvers')
+const { getAllModules } = require('../resolvers/module.resolvers')
+const { getAllProfeseurByDepartementId } = require('../resolvers/profeseur.resolvers')
 
 
 const QueryType = new GraphQLObjectType({
@@ -32,11 +34,23 @@ const QueryType = new GraphQLObjectType({
             },
             resolve : getAcadimicYearByDepartementId
         },
-        Hello : {
-            type : GraphQLString,
-            resolve : ()=>{
-                return "Hello nI"
-            }
+        getAllModules : {
+            type : moduleReturnsResult,
+            args : {
+                page : { type : GraphQLInt } ,
+                limit : { type : GraphQLInt } ,
+                departementId : { type : GraphQLID }
+            },
+            resolve : getAllModules
+        },
+        getAllProfeseurByDepartementId : {
+            type: new GraphQLList(TeacherResultType),
+            args: {
+                departementId: { type: GraphQLID },
+                page: { type: GraphQLInt },
+                limit: { type: GraphQLInt }
+            },
+            resolve: getAllProfeseurByDepartementId
         }
     }
 })

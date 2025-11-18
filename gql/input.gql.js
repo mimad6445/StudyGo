@@ -69,10 +69,31 @@ const moduleInput = new GraphQLInputObjectType({
     }
 })
 
+const profeseurInput = new GraphQLInputObjectType({
+    name : "profeseutInput",
+    fields : {
+        fullName : { type : GraphQLNonNull(GraphQLString) },
+        email : { type : GraphQLString },
+        emailUniversity : { type : GraphQLString },
+        password : { type : GraphQLNonNull(GraphQLString) },
+        contact : { type : GraphQLNonNull(GraphQLString) },
+        dateOfBirth : { type : GraphQLNonNull(GraphQLString) },
+        address : { type : GraphQLNonNull(GraphQLString) },
+        bloodGroup : { type : GraphQLString },
+        researchArea : { type : GraphQLString },
+        linkedIn : { type : GraphQLString },
+        status : { type : GraphQLString },
+        degree : { type : GraphQLNonNull(GraphQLString) },
+        designation : { type : GraphQLNonNull(GraphQLString) },
+        gender : { type : GraphQLNonNull(GraphQLString) }
+    }
+})
+
 module.exports = {
     adminInput,
     universityInput,
     departementInput,
     SectionInput,
-    moduleInput
+    moduleInput,
+    profeseurInput
 }

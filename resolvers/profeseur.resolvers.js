@@ -1,10 +1,15 @@
-const user = require('../models/user.model');
+const user = require('../models/Account.model');
 const departement = require('../models/departement.model');
 const { addProffesor } = require('../validation/user.validation');
 const section = require('../models/Section.model');
-const module = require('../models/module.model');
+const moduleModel = require('../models/module.model');
+const teacherModel = require('../models/teacher.model');
+const mongoose = require("mongoose")
+const bcrypt = require("bcryptjs")
 
-const createProfeseur = async (_,{departementId,profeseurInput},context)=>{
+const createProfeseur = async (_,{departementId,profeseurInput,forceCreation},context)=>{
+    const session = await mongoose.startSession();
+    session.startTransaction();
     try {
         if(!context.user){
             return {
@@ -12,10 +17,39 @@ const createProfeseur = async (_,{departementId,profeseurInput},context)=>{
                 message: "Unauthorized",
             };
         }
+        const existingDepartement = await departement.findById(departementId)
+        if(!existingDepartement){
+            return {
+                Errorcode: 404,
+                message: "Not Found",
+            };
+        }
+        const safeParse = addProffesor.safeParse(profeseurInput);
+        if(!safeParse.success){
+            return {
+                Errorcode : 401,
+                message : "Validation error: " + safeParse.error.message
+            }
+        }
+        const { fullName, email, password, emailUniversity , contact , dateOfBirth , address ,bloodGroup,researchArea,linkedIn,status,degree ,designation ,gender} = safeParse.data;
         const existingProfeseur = await user.findOne({ emailUniversity: profeseurInput.emailUniversity });
         if(existingProfeseur){
             if(existingProfeseur.departementId !== departementId){
-                // make a request to check if the profeseur is in another departement
+                if(forceCreation){
+                    const user = await teacherModel.findOne({ userId : existingProfeseur._id})
+                    if(!user){
+                        const newTeacher = new teacherModel({
+                            dateOfBirth , address , bloodGroup , researchArea , linkedIn , status , degree , designation , gender , departementId , universityId : existingDepartement.universityId , userId : existingProfeseur._id
+                        })
+                        await newTeacher.save()
+                        return newTeacher
+                    }else{
+                        teacherModel.universityId  = existingDepartement.universityId
+                        teacherModel.departementId = departementId
+                        await newTeacher.save()
+                        return newTeacher
+                    }
+                }
                 return {
                     Errorcode : 410,
                     message : "Profeseur with this university email already exists in another departement"
@@ -26,41 +60,30 @@ const createProfeseur = async (_,{departementId,profeseurInput},context)=>{
                     Errorcode : 409,
                     message : "Profeseur with this university email already exists"
                 }
+            }else{
+                return {
+                    Errorcode : 408,
+                    message : "The role is not for Tracher"
+                }
             }
         }
-        const safeParse = addProffesor.safeParse(profeseurInput);
-        if(!safeParse.success){
-            return {
-                Errorcode : 401,
-                message : "Validation error: " + safeParse.error.message
-            }
-        }
-        const { name, email, password, emailUniversity , contact , dateOfBirth , city } = safeParse.data;
+        
+        const hashedPassword = await bcrypt.hash(password,10)
         const newProfeseur = new user({
-            name, email, password, emailUniversity, contact, role: 'Teacher', departementId , city , dateOfBirth
+            fullName, email, password :hashedPassword, emailUniversity, contact, role: 'Teacher' 
         });
-        await newProfeseur.save();
-        return newProfeseur;
+        const newTeacher = new teacherModel({
+            dateOfBirth , address , bloodGroup , researchArea , linkedIn , status , degree , designation , gender , departementId , universityId : existingDepartement.universityId , userId : newProfeseur._id
+        })
+        await newProfeseur.save({ session });
+        await newTeacher.save({ session })
+        await session.commitTransaction();
+        await session.endSession();
+        const populatedTeacher = await teacherModel.findById(newTeacher._id).populate("userId").populate("Modules")
+        return populatedTeacher;
     } catch (error) {
-        console.error(error);
-        return {
-            code: 500,
-            message: "Internal server error",
-        };
-    }
-}
-
-const getAllProfeseurByDepartementId = async (_,{departementId},context) => {
-    try{
-        if(!context.user || context.user.id !== departementId){
-            return {
-                Errorcode: 403,
-                message: "Unauthorized",
-            };
-        }
-        const profeseurs = await user.find({ departementId, role: 'Teacher' });
-        return profeseurs;
-    }catch(error){
+        await session.abortTransaction();
+        session.endSession();
         console.error(error);
         return {
             Errorcode: 500,
@@ -68,6 +91,40 @@ const getAllProfeseurByDepartementId = async (_,{departementId},context) => {
         };
     }
 }
+
+const getAllProfeseurByDepartementId = async (_, { departementId, page = 1, limit = 10 }, context) => {
+    try {
+        if (!context.user) {
+            return [{
+                Errorcode: 403,
+                message: "Unauthorized",
+            }];
+        }
+
+        if (context.user.departementId !== departementId) {
+            return [{
+                Errorcode : 403,
+                message : "You are not Authorized to see departements Professeur"
+            }];
+        }
+
+        const skip = (page - 1) * limit;
+
+        const profeseurs = await teacherModel
+            .find({ departementId })
+            .skip(skip)
+            .limit(limit);
+
+        return profeseurs;
+    } catch (error) {
+        console.error(error);
+        return [{
+            Errorcode : 500,
+            message : "Internal message Error "+error.message
+        }];
+    }
+};
+
 
 const getProfeseurById = async (_,{profeseurId},context) => {
     try{
@@ -248,7 +305,7 @@ const AddProffesorToSection = async (_,{profeseurId,sectionId,moduleId},context)
                 message: "Section Not Found",
             };
         }
-        const moduleExists = await module.findById(moduleId);
+        const moduleExists = await moduleModel.findById(moduleId);
         if(!moduleExists){
             return {
                 Errorcode: 404,
