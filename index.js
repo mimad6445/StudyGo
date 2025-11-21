@@ -23,6 +23,16 @@ const schema = new GraphQLSchema({
     mutation: MutationType,
 });
 
+app.use('/robots.txt', (req, res) => {
+    res.type('text/plain');
+    res.send("User-agent: *\nAllow: /");
+});
+
+// Or if you created the file:
+app.get('/robots.txt', (req, res) => {
+    res.sendFile(path.join(__dirname, 'robots.txt'));
+});
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
