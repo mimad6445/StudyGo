@@ -10,7 +10,7 @@ const {
 } = require('graphql');
 
 /* ============================
-   BASE TYPES
+   BASE TYPES --
 ============================ */
 
 const ErrorType = new GraphQLObjectType({
