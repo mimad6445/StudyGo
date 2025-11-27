@@ -34,6 +34,7 @@ const PaginationType = new GraphQLObjectType({
 const FileType = new GraphQLObjectType({
     name: 'File',
     fields: {
+        id : { type : GraphQLID },
         name: { type: GraphQLString },
         type: { type: GraphQLString },
         path: { type: GraphQLString },
@@ -47,6 +48,7 @@ const FileType = new GraphQLObjectType({
 const AccountType = new GraphQLObjectType({
     name: "Account",
     fields: () => ({
+        id : { type : GraphQLID },
         fullName : { type: GraphQLString },
         email: { type: GraphQLString },
         emailUniversity: { type: GraphQLString },
@@ -84,6 +86,7 @@ const AuthPayloadResultType = new GraphQLUnionType({
 const StudentType = new GraphQLObjectType({
     name: "Student",
     fields: () => ({
+        id : { type : GraphQLID },
         fullName: { type: GraphQLString },
         StudentCard: { type: GraphQLString },
         dateOfBirth: { type: GraphQLString },
@@ -113,6 +116,7 @@ const StudentResultType = new GraphQLUnionType({
 const ModuleType = new GraphQLObjectType({
     name: "Module",
     fields: {
+        id : { type : GraphQLID },
         name: { type: GraphQLString },
         code: { type: GraphQLString },
         Coef: { type: GraphQLInt },
@@ -153,6 +157,7 @@ const moduleReturnsResult = new GraphQLUnionType({
 const TeacherType = new GraphQLObjectType({
     name: "Teacher",
     fields: () => ({
+        id : { type : GraphQLID },
         dateOfBirth: { type: GraphQLString },
         gender: { type: GraphQLString },
         designation: { type: GraphQLString },
@@ -196,6 +201,7 @@ const ScheduleType = new GraphQLObjectType({
 const YearAcademicType = new GraphQLObjectType({
     name: "YearAcademic",
     fields: () => ({
+        id : { type : GraphQLID },
         startYear: { type: GraphQLInt },
         endYear: { type: GraphQLInt },
         isCurrent: { type: GraphQLInt },
@@ -219,6 +225,7 @@ const YearAcademicResultYear = new GraphQLUnionType({
 const GroupType = new GraphQLObjectType({
     name: 'Group',
     fields: {
+        id : { type : GraphQLID },
         name: { type: GraphQLString },
         description: { type: GraphQLString },
         members: { type: new GraphQLList(StudentType) },
@@ -232,6 +239,7 @@ const GroupType = new GraphQLObjectType({
 const ProfOfSections = new GraphQLObjectType({
     name: 'ProfSection',
     fields: {
+        id : { type : GraphQLID },
         data: { type: TeacherType },
         module: { type: ModuleType }
     }
@@ -240,6 +248,7 @@ const ProfOfSections = new GraphQLObjectType({
 const SectionType = new GraphQLObjectType({
     name: 'Section',
     fields: {
+        id : { type : GraphQLID },
         yearAcademic: { type: YearAcademicType },
         System: { type: GraphQLString },
         Niveaux: { type: GraphQLString },
@@ -269,6 +278,7 @@ const SectionResultType = new GraphQLUnionType({
 const RoomType = new GraphQLObjectType({
     name: "Room",
     fields: {
+        id : { type : GraphQLID },
         name: { type: GraphQLString },
         BuildingName: { type: GraphQLString },
         capacity: { type: GraphQLString },
@@ -280,6 +290,7 @@ const RoomType = new GraphQLObjectType({
 const DepartmentType = new GraphQLObjectType({
     name: "Department",
     fields: {
+        id : { type : GraphQLID },
         name: { type: GraphQLString },
         description: { type: GraphQLString },
         location: { type: GraphQLString },
@@ -309,6 +320,7 @@ const DepartmentResultType = new GraphQLUnionType({
 const UniversityType = new GraphQLObjectType({
     name: 'University',
     fields: {
+        id : { type : GraphQLID },
         name: { type: GraphQLString },
         code: { type: GraphQLString },
         address: { type: GraphQLString },
