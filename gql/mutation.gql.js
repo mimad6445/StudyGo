@@ -1,13 +1,14 @@
 const {GraphQLObjectType,GraphQLList,GraphQLID, GraphQLInt , GraphQLString , GraphQLNonNull ,GraphQLInputObjectType, GraphQLBoolean} = require('graphql');
 const { createAdmin, loginUser } = require('../resolvers/user.resolvers');
-const { AuthPayloadResultType, UniversityResultType, ErrorType, DepartmentResultType, SectionResultType, YearAcademicResultYear, ModuleResultType, TeacherResultType } = require('./schema.gql');
-const { adminInput, universityInput, departementInput, SectionInput, moduleInput, profeseurInput } = require("./input.gql");
+const { AuthPayloadResultType, UniversityResultType, ErrorType, DepartmentResultType, SectionResultType, YearAcademicResultYear, ModuleResultType, TeacherResultType, RoomResultType } = require('./schema.gql');
+const { adminInput, universityInput, departementInput, SectionInput, moduleInput, profeseurInput, roomInput } = require("./input.gql");
 const { AddUniversity, DeleteUniversity, UpdateUniversity } = require('../resolvers/university.resolvers');
 const { CreateDepartement } = require('../resolvers/deparetement.resolvers');
-const { CreateSection } = require('../resolvers/section.resolvers');
+const { CreateSection, CreationProfAssignment } = require('../resolvers/section.resolvers');
 const { addAcadimicYear } = require('../resolvers/yearAcadimic.resolvers');
 const { CreateModule } = require('../resolvers/module.resolvers');
 const { createProfeseur, ProfeseurSections } = require('../resolvers/profeseur.resolvers');
+const { CreateRoomByDepartementId } = require('../resolvers/rooms.resolvers');
 
 const Mutation = new GraphQLObjectType({
     name: 'Mutation',
@@ -91,7 +92,26 @@ const Mutation = new GraphQLObjectType({
                 forceCreation : { type : GraphQLBoolean }
             },
             resolve : createProfeseur
-        }
+        },
+        CreateRoomByDepartementId : {
+            type : RoomResultType,
+            args : {
+                departementId : { type : GraphQLID },
+                roomInput : { type : roomInput }
+            },
+            resolve : CreateRoomByDepartementId
+        },
+        CreationProfAssignment : {
+            type : SectionResultType,
+            args : {
+                SectionId : { type : GraphQLID },
+                ModuleId : { type : GraphQLID },
+                TeacherId : { type : GraphQLID },
+                type : { type : GraphQLString }
+            },
+            resolve : CreationProfAssignment
+        },
+
     },
 });
 

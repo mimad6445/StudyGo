@@ -2,7 +2,7 @@ const {GraphQLObjectType,GraphQLList,GraphQLID, GraphQLBoolean, GraphQLString, G
 const { findAllUniversity } = require('../resolvers/university.resolvers')
 const { UniversityResultType, DepartmentResultType, YearAcademicResultYear, moduleReturnsResult, TeacherResultType } = require('./schema.gql')
 const { getAllDepertement } = require('../resolvers/deparetement.resolvers')
-const { getAllSectionByDepartementId } = require('../resolvers/section.resolvers')
+const { getAllSectionByDepartementId, getAllSectionByDepartementIdNiveau } = require('../resolvers/section.resolvers')
 const { getAcadimicYearByDepartementId } = require('../resolvers/yearAcadimic.resolvers')
 const { getAllModules } = require('../resolvers/module.resolvers')
 const { getAllProfeseurByDepartementId } = require('../resolvers/profeseur.resolvers')
@@ -51,7 +51,16 @@ const QueryType = new GraphQLObjectType({
                 limit: { type: GraphQLInt }
             },
             resolve: getAllProfeseurByDepartementId
-        }
+        },
+        getAllSectionByDepartementIdNiveau: {
+            type : DepartmentResultType,
+            args:{
+                departementId : { type : GraphQLID},
+                AcadimicYearId: { type : GraphQLID},
+                Niveaux : { type : GraphQLString},
+            },
+            resolve : getAllSectionByDepartementIdNiveau
+        },
     }
 })
 

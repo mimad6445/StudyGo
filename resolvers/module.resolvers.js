@@ -121,15 +121,16 @@ const CreateModule = async (_,{departementId,moduleInput},context) => {
                 message : "Validation error: " + safeResult.error.message
             }
         }
-        const { name, code, Coef , Credites } = moduleInput;
+        const { name,code,Coef,Credites,VHS,VHS_Cours,VHS_TD,VHS_TP,Mode_enseignement,Mode_evaluation,Niveau,Semestre} = moduleInput;
         const newModule = new Module({
-            name, code, Credites, Coef
+            name, code, Credites, Coef,VHS,VHS_Cours,VHS_TD,VHS_TP,Mode_enseignement,Mode_evaluation,Niveau,Semestre,departementId
         });
         existingDepartement.modules.push(newModule._id);
         await existingDepartement.save({ session });
         await newModule.save({ session});
         await session.commitTransaction();
         await session.endSession();
+        console.log("New Module",newModule);
         return newModule;
     }catch (error) {
         await session.abortTransaction();

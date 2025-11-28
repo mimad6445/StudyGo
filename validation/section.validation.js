@@ -6,7 +6,9 @@ const addSection = z.object({
     System : z.string(),
     Niveaux : z.string(),
     isSpeciality : z.boolean(),
-    name : z.string().optional()
+    name : z.string().optional(),
+    CapacityMin : z.number().optional(),
+    CapacityMax : z.number().optional()
 })
 
 module.exports = { addSection }

@@ -8,7 +8,7 @@ const departementSchema = new mongoose.Schema({
     establishedYear : { type : String },
     universityId: { type: mongoose.Types.ObjectId, ref: "University"},
     rooms : [{ type : mongoose.Types.ObjectId , ref: "room"}],
-    sections : [{ type : mongoose.Types.ObjectId , ref: "Section"}],
+    sections : [{ type : mongoose.Types.ObjectId , ref: "section"}],
     modules : [{ type : mongoose.Types.ObjectId , ref : "Module"}],
     userId : { type : mongoose.Types.ObjectId , ref : "Account", required : true },
     acadimicYear : [{ type : mongoose.Types.ObjectId , ref : "AcadimicYear"}],

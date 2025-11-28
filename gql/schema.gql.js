@@ -7,6 +7,7 @@ const {
     GraphQLUnionType,
     GraphQLBoolean,
     GraphQLNonNull,
+    GraphQLFloat
 } = require('graphql');
 
 /* ============================
@@ -117,10 +118,18 @@ const ModuleType = new GraphQLObjectType({
     name: "Module",
     fields: {
         id : { type : GraphQLID },
-        name: { type: GraphQLString },
-        code: { type: GraphQLString },
-        Coef: { type: GraphQLInt },
-        Credites: { type: GraphQLInt },
+        name: { type : GraphQLString },
+        code: { type : GraphQLString }, // optional, e.g., "CS101"
+        Coef : { type : GraphQLInt },
+        Credites : { type : GraphQLInt },
+        VHS : { type : GraphQLInt },
+        VHS_Cours: { type : GraphQLFloat },
+        VHS_TD: { type : GraphQLFloat },
+        VHS_TP: { type : GraphQLFloat },
+        Mode_evaluation : { type : new GraphQLObjectType({ name : "ModeEnseignement",fields :{ Continue : { type : GraphQLInt }, Examen : { type : GraphQLInt } } } )},
+        Mode_enseignement : { type : GraphQLString },
+        Niveau : { type : GraphQLString },
+        Semestre : { type : GraphQLString },
         files: { type: new GraphQLList(FileType) }
     }
 });
@@ -236,12 +245,14 @@ const GroupType = new GraphQLObjectType({
    PROF - MODULE - SECTION
 ============================ */
 
-const ProfOfSections = new GraphQLObjectType({
+const Assignments = new GraphQLObjectType({
     name: 'ProfSection',
     fields: {
         id : { type : GraphQLID },
-        data: { type: TeacherType },
-        module: { type: ModuleType }
+        sectionId : { type : GraphQLID },
+        teacher : { type : GraphQLID },
+        module : { type : GraphQLID },
+        type : { type : GraphQLString }
     }
 });
 
@@ -251,9 +262,11 @@ const SectionType = new GraphQLObjectType({
         id : { type : GraphQLID },
         yearAcademic: { type: YearAcademicType },
         System: { type: GraphQLString },
+        CapacityMin : { type : GraphQLInt },
+        CapacityMax : { type : GraphQLInt },
         Niveaux: { type: GraphQLString },
         isSpeciality: { type: GraphQLBoolean },
-        professeur: { type: new GraphQLList(ProfOfSections) },
+        Assignments: { type: new GraphQLList(Assignments) },
         serverId: { type: GraphQLString },
         users: { type: new GraphQLList(StudentType) },
         Groups: { type: new GraphQLList(GroupType) },
@@ -284,6 +297,15 @@ const RoomType = new GraphQLObjectType({
         capacity: { type: GraphQLString },
         type: { type: GraphQLString },
         facilities: { type: new GraphQLList(GraphQLString) }
+    }
+});
+
+const RoomResultType = new GraphQLUnionType({
+    name: "RoomResult",
+    types: [RoomType, ErrorType],
+    resolveType(value) {
+        if (value.message) return ErrorType;
+        return RoomType;
     }
 });
 
@@ -359,5 +381,6 @@ module.exports = {
     SectionType,
     UniversityType,
     YearAcademicResultYear,
-    moduleReturnsResult
+    moduleReturnsResult,
+    RoomResultType
 };

@@ -53,6 +53,8 @@ const SectionInput = new GraphQLInputObjectType({
     fields : {
         yearAcadimic : { type: GraphQLID},
         System : { type: GraphQLString },
+        CapacityMin : { type : GraphQLInt },
+        CapacityMax : { type : GraphQLInt },
         Niveaux : { type: GraphQLString },
         isSpeciality : { type: GraphQLBoolean },
         name : { type : GraphQLString }
@@ -65,7 +67,15 @@ const moduleInput = new GraphQLInputObjectType({
         name: { type : GraphQLString },
         code: { type : GraphQLString }, // optional, e.g., "CS101"
         Coef : { type : GraphQLInt },
-        Credites : { type : GraphQLInt }
+        Credites : { type : GraphQLInt },
+        VHS : { type : GraphQLInt },
+        VHS_Cours: { type : GraphQLFloat },
+        VHS_TD: { type : GraphQLFloat },
+        VHS_TP: { type : GraphQLFloat },
+        Mode_evaluation : { type : new GraphQLInputObjectType({ name : "ModeEnseignementInput",fields :{ Continue : { type : GraphQLInt }, Examen : { type : GraphQLInt } } } )},
+        Mode_enseignement : { type : GraphQLString },
+        Niveau : { type : GraphQLString },
+        Semestre : { type : GraphQLString },
     }
 })
 
@@ -89,11 +99,23 @@ const profeseurInput = new GraphQLInputObjectType({
     }
 })
 
+const roomInput = new GraphQLInputObjectType({
+    name : "roomInput",
+    fields : {
+        name: { type: GraphQLNonNull(GraphQLString) },
+        BuildingName: { type: GraphQLString },
+        capacity: { type: GraphQLString },
+        type : { type : GraphQLNonNull(GraphQLString) },
+        facilities : { type : GraphQLList(GraphQLString) }
+    }
+})
+
 module.exports = {
     adminInput,
     universityInput,
     departementInput,
     SectionInput,
     moduleInput,
-    profeseurInput
+    profeseurInput,
+    roomInput
 }
